@@ -173,6 +173,10 @@ is available in:
 
 For deeper technical details, please consult the full report.
 
+It is also possible to consult the project presentation in:
+
+📎 `slides/FinAlign-Presentation.pdf`
+
 ---
 
 ## 🔬 Key Takeaways
