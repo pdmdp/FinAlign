@@ -1,0 +1,10 @@
+python-terrier
+pyterrier_dr
+pyterrier-alpha
+matplotlib
+seaborn
+transformers
+torch
+tqdm
+pandas
+numpy
