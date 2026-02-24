@@ -9,9 +9,9 @@ University of Pavia
 
 ## 📌 Overview
 
-**FinAlign** is a multi-stage hybrid Information Retrieval system designed for **Financial Question Answering (FiQA)** using the BEIR benchmark.
+**FinAlign** is a multi-stage hybrid Information Retrieval system designed for Financial Question Answering (FiQA) using the BEIR benchmark.
 
-The project addresses a key challenge in financial retrieval:
+The project addresses a central challenge in financial retrieval:
 
 > Bridging the vocabulary and knowledge gap between non-expert user queries and technical financial documents.
 
@@ -25,18 +25,18 @@ Unlike traditional keyword-based systems, FinAlign integrates:
 - Score fusion strategies (RRF & linear combination)
 - Neural re-ranking with monoT5
 
-The system demonstrates that instruction-aware dense retrieval combined with chunking and multi-stage re-ranking significantly improves performance over classical IR baselines.
+The results show that instruction-aware dense retrieval combined with chunking and multi-stage re-ranking significantly improves performance over classical IR baselines.
 
 ---
 
 ## 📂 Dataset
 
-We use the **FiQA dataset** from the BEIR benchmark.
+We use the FiQA dataset from the BEIR benchmark.
 
 - ~57,600 documents (after cleaning)
 - 648 unique queries
 - 1,705 relevance judgments (qrels)
-- Heterogeneous corpus:
+- Heterogeneous corpus including:
   - Financial news
   - Microblogs
   - Report snippets
@@ -56,8 +56,11 @@ FinAlign is implemented as a multi-stage retrieval pipeline:
 
 ### 2️⃣ Dense Retrieval
 - BGE-base bi-encoder  
-- Instruction-aware query prefixing:  
-  “Represent this sentence for searching relevant financial passages:”  
+- Instruction-aware query prefixing:
+
+```
+Represent this sentence for searching relevant financial passages:
+```
 
 ### 3️⃣ Query Expansion
 - LLM-based query rewriting  
@@ -75,7 +78,7 @@ FinAlign is implemented as a multi-stage retrieval pipeline:
 
 ### 6️⃣ Neural Re-ranking
 - monoT5 cross-encoder  
-- Applied to a restricted candidate set  
+- Applied to a restricted candidate set due to computational constraints  
 
 ---
 
@@ -95,7 +98,7 @@ All systems are evaluated under identical conditions.
 
 ## 🚀 Main Results
 
-Key findings from the experiments:
+Key findings:
 
 - Dense retrieval (BGE) significantly outperforms lexical baselines.
 - Instruction-aware prefixing improves embedding alignment.
@@ -112,13 +115,34 @@ Dense retrieval (instruction-tuned)
 + Linear fusion  
 + monoT5 re-ranking  
 
-This setup achieves the highest nDCG@10 and recall values.
-
-For complete numerical results, metric tables, and detailed analysis, please refer to the full project report.
+For complete numerical results, detailed metric tables, and full experimental analysis, please refer to the project report.
 
 ---
 
-## 🛠 Implementation Details
+## 🛠 Installation
+
+### 1️⃣ Clone the repository
+
+```bash
+git clone https://github.com/pdmdp/FinAlign.git
+cd FinAlign
+```
+
+### 2️⃣ Install dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+### 3️⃣ Install monoT5 extension
+
+```bash
+pip install --upgrade git+https://github.com/terrierteam/pyterrier_t5.git
+```
+
+---
+
+## ⚙️ Implementation Details
 
 - Python  
 - PyTerrier  
@@ -129,7 +153,7 @@ For complete numerical results, metric tables, and detailed analysis, please ref
 - monoT5 re-ranker  
 - Google Colab (T4 GPU)  
 
-Due to computational constraints, re-ranking is applied to a limited candidate set.
+Due to hardware constraints, re-ranking is applied only to a limited candidate set.
 
 ---
 
@@ -143,11 +167,11 @@ A complete description of:
 - Discussion and limitations  
 - Future work  
 
-is available in the full report:
+is available in:
 
-📎 `FinalReportIRProject.pdf`
+📎 `report/FinalReportIRProject.pdf`
 
-If more specific technical details are needed, please consult the project report.
+For deeper technical details, please consult the full report.
 
 ---
 
