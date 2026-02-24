@@ -1,9 +1,10 @@
 python-terrier
 pyterrier_dr
-pyterrier-alpha
 matplotlib
 seaborn
 transformers
+sentence-transformers
+faiss-cpu
 torch
 tqdm
 pandas
