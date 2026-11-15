@@ -1,0 +1,26 @@
+{
+  "archive_sha256": "45b9da96081deb1f2f8c946125c413bafe7bad464fcc0b3c9ccec21300036366",
+  "archive_bytes": 218022178,
+  "documents": 57600,
+  "passages": 66113,
+  "embedding_shape": [
+    66113,
+    768
+  ],
+  "dtype": "float32",
+  "all_files_verified": true,
+  "corpus_and_model_lock_match": true,
+  "finite_nonzero_vectors": true,
+  "norm_range": [
+    0.9999998211860657,
+    1.0000001192092896
+  ],
+  "embedding_seconds": 1085.3172774660002,
+  "embedding_minutes": 18.088621291100004,
+  "embedding_packages": {
+    "torch": "2.8.0+cu126",
+    "transformers": "5.12.1",
+    "sentence-transformers": "6.3.0"
+  },
+  "validation_seconds": 2.7484975419938564
+}

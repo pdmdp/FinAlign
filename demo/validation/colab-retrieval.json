@@ -1,0 +1,81 @@
+{
+  "device": "cpu",
+  "encoder_only": true,
+  "queries": [
+    {
+      "qid": "1952",
+      "query": "What happened when the dot com bubble burst?",
+      "top_doc_ids": [
+        "414596",
+        "287167",
+        "585900",
+        "220156",
+        "273509"
+      ],
+      "metrics": {
+        "nDCG@10": 0.8104616303452685,
+        "AP": 0.7682326084344587,
+        "Recall@10": 0.7142857142857143
+      },
+      "timings_ms": {
+        "Query encoding": 1862.210666993633,
+        "Passage search and fusion": 3676.1671248823404
+      }
+    },
+    {
+      "qid": "1718",
+      "query": "What exactly is the interest rate that the Fed is going to adjust?",
+      "top_doc_ids": [
+        "357103",
+        "594667",
+        "235522",
+        "483218",
+        "65648"
+      ],
+      "metrics": {
+        "nDCG@10": 0.0,
+        "AP": 0.09889724310776941,
+        "Recall@10": 0.0
+      },
+      "timings_ms": {
+        "Query encoding": 3731.495749903843,
+        "Passage search and fusion": 1687.649416970089
+      }
+    },
+    {
+      "qid": "469",
+      "query": "What is the difference between a bond and a debenture?",
+      "top_doc_ids": [
+        "250939",
+        "537053",
+        "438449",
+        "450978",
+        "312893"
+      ],
+      "metrics": {
+        "nDCG@10": 0.6131471927654584,
+        "AP": 0.5217391304347826,
+        "Recall@10": 0.5
+      },
+      "timings_ms": {
+        "Query encoding": 259.19908401556313,
+        "Passage search and fusion": 21.327791968360543
+      }
+    }
+  ],
+  "spot_check_rows": [
+    0,
+    127,
+    3840,
+    33056,
+    66112
+  ],
+  "cpu_cuda_cosines": [
+    1.0,
+    1.0,
+    1.0000001192092896,
+    1.0000001192092896,
+    1.0
+  ],
+  "notes": "Execution checks on the three fixed demo examples, not a benchmark or full-pipeline test. Qwen, monoT5 and hosted ZeroGPU callbacks remain to verify."
+}

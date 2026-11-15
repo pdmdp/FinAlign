@@ -47,7 +47,8 @@ def query_metrics(known, lexical, neural):
 
 
 CSS = """
-.gradio-container {max-width: 1240px !important; margin: auto;}
+.gradio-container {width: 100% !important; max-width: 1240px !important; margin: auto;}
+#retrieval-options .form > .block {min-width: min(220px, 100%) !important;}
 #masthead {padding: 24px 0 12px; border-bottom: 1px solid var(--border-color-primary); margin-bottom: 16px;}
 #masthead .eyebrow {letter-spacing: .16em; text-transform: uppercase; font-size: 11px; color: #7b8391; font-weight: 600;}
 #masthead h1 {font-size: clamp(36px, 5vw, 52px); line-height: 1.05; margin: 10px 0 12px; letter-spacing: -.04em;}

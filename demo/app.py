@@ -126,7 +126,7 @@ def make_app():
         with gr.Group(visible=INDEX.ready) as search_panel:
             with gr.Row():
                 query = gr.Textbox(label="Your question", placeholder="Why does a bond’s price fall when interest rates rise?",
-                                   lines=2, max_lines=3, max_length=600, scale=5)
+                                   lines=2, max_lines=3, max_length=600, scale=5, min_width=280)
                 submit = gr.Button("Compare search results", variant="primary", scale=1)
             # Fixed questions from the dev split; selected for readable wording, not scores.
             example_ids = {"1952", "1718", "469"}
@@ -135,7 +135,7 @@ def make_app():
             with gr.Accordion("Retrieval settings", open=True):
                 gr.Markdown("Start with BGE, or turn on components to inspect their effect. "
                             "All four options together reproduce the notebook’s final pipeline design.")
-                with gr.Row():
+                with gr.Row(elem_id="retrieval-options"):
                     keywords = gr.Checkbox(label="Technical keywords · Qwen", value=False, interactive=not ENCODER_ONLY)
                     hyde = gr.Checkbox(label="Hypothetical expansion · Qwen", value=False, interactive=not ENCODER_ONLY)
                     lexical = gr.Checkbox(label="Blend BM25 with BGE", value=False)
