@@ -45,7 +45,7 @@ nDCG@10 measures how highly relevant documents appear in the first ten results. 
 
 The same 648 FiQA test queries informed the original design choices and evaluation. The results are exploratory, and statistical significance was not established for the final neural comparisons. MAP also depends on the different ranking depths returned by the systems.
 
-The [next experiment](demo/EXPERIMENTS.md) specifies three comparisons, development-set parameter selection and paired analysis on the test queries, retaining the limitation that this test set was used before.
+The [follow-up experiment](experiments/README.md) implements three planned comparisons, development-set parameter selection and paired analysis on the test queries, retaining the limitation that this test set was used before. [Run it in Colab](https://colab.research.google.com/github/pdmdp/FinAlign/blob/main/experiments/run_colab.ipynb); the notebook saves checkpoints and freezes the selected parameters before test evaluation. The full follow-up results are still pending.
 
 The demo searches 57,600 nonempty documents and 66,113 passages from the historical FiQA collection. Shared ZeroGPU queues and daily limits apply; BM25 remains available when the neural allowance is exhausted. These documents and generated query variants are not current financial advice.
 
