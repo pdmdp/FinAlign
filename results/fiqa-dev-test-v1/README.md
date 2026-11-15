@@ -1,6 +1,6 @@
 # FiQA follow-up evaluation
 
-Query expansion and a modest lexical contribution improved retrieval in this run. Reranking produced the highest mean score, but its additional gain was too small to distinguish from query-level variation with the planned test.
+Query expansion and a modest lexical contribution improved retrieval in this run. Reranking produced the highest observed mean score, but its effect remains uncertain: the interval includes both gains and losses, and the test does not establish equivalence to skipping reranking.
 
 <img src="results-overview.svg" alt="Five retrieval systems and three paired comparisons on 648 FiQA test queries" width="900">
 
@@ -8,9 +8,29 @@ The 648 test queries had influenced the original coursework design. Selecting pa
 
 ## Selection on dev
 
-The [predefined plan](../../demo/EXPERIMENTS.md) compared five expansion settings on all 500 dev queries, followed by five lexical weights. The selected expansion weights were **0.70 original query, 0.15 keywords, 0.15 hypothetical answer**. The selected fusion was **75% normalized dense score and 25% normalized BM25 score**. No test result was used to select these weights in this run.
+The [predefined plan at the run's source revision](https://github.com/pdmdp/FinAlign/blob/f0c006a328694de8c31bb09b398a19136f027032/demo/EXPERIMENTS.md) compared five expansion settings on all 500 dev queries, followed by five lexical weights. The selected expansion weights were **0.70 original query, 0.15 keywords, 0.15 hypothetical answer**. The selected fusion was **75% normalized dense score and 25% normalized BM25 score**. No test result was used to select these weights in this run.
 
 The configuration was frozen at 21:14:15 UTC on 15 November 2026; the test stage started at 21:14:22 UTC. The [dev selection](dev_selection.json), [frozen configuration](frozen_config.json) and [test-start record](test_started.json) retain those choices and timestamps.
+
+| Expansion weights: original / keywords / hypothetical answer | Dev nDCG@10 |
+| :--- | ---: |
+| **0.70 / 0.15 / 0.15** | **0.431670** |
+| 0.50 / 0.25 / 0.25 | 0.428489 |
+| 0.85 / 0.075 / 0.075 | 0.427345 |
+| 0.70 / 0.20 / 0.10 | 0.428718 |
+| 0.70 / 0.10 / 0.20 | 0.431280 |
+
+The five means span 0.004324, and the winning setting exceeds the next-best setting by only 0.000390. These are selection scores, not additional hypothesis tests. They show limited sensitivity within this grid on dev; they do not establish that expansion weights are generally unimportant or that the exact selected setting is a robust optimum.
+
+| BM25 weight alpha | Dev nDCG@10 |
+| :--- | ---: |
+| 0: expanded BGE only | 0.431670 |
+| **0.25** | **0.444985** |
+| 0.50: equal lexical and dense weights | 0.412392 |
+| 0.75 | 0.337897 |
+| 1: BM25 only | 0.269471 |
+
+Equal weighting lowers the dev mean relative to expanded BGE, consistent with the direction observed in the coursework. The 25% lexical setting improves it. These comparisons reuse the same saved query variants and component scores; the grid was not expanded after inspecting test results.
 
 ## Test results
 
@@ -34,7 +54,9 @@ Each mean uses all **648 test queries**. nDCG@10 is the primary metric. Recall@1
 
 The analysis used 20,000 paired bootstrap samples and 100,000 two-sided sign randomizations. Holm correction covers the three comparisons as one family at alpha 0.05. The bootstrap intervals are marginal, not simultaneous. Seeds and settings are retained in [summary.json](summary.json).
 
-Expansion and lexical fusion passed the corrected significance threshold. Their mean gains are modest, and each also worsened some queries. Reranking improved 181 queries and worsened 179; its interval includes both gains and losses. A nonsignificant result does not establish equivalence.
+Expansion and lexical fusion passed the corrected significance threshold. Their mean gains are modest, and each also worsened some queries. Reranking improved 181 queries and worsened 179. Its mean estimate is +0.000727, but the interval extends from −0.014645 to +0.016394: a small observed mean is not evidence that the underlying effect must be small. The data do not establish benefit, harm or equivalence.
+
+The improved/tied/worsened counts refer to **nDCG@10**, not to whether the retrieved documents or their order changed. A different top 10 can have exactly the same score under the available relevance judgments.
 
 [Per-query differences](paired_differences.csv) · [All system scores per query](per_query.csv) · [Difference distributions](paired-differences.svg)
 

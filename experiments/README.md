@@ -2,7 +2,7 @@
 
 [Open the notebook in Colab](https://colab.research.google.com/github/pdmdp/FinAlign/blob/main/experiments/run_colab.ipynb)
 
-Select query-expansion and lexical-fusion weights on 500 FiQA dev queries, then evaluate five systems on 648 test queries with a frozen configuration. The runner implements the [published plan](../demo/EXPERIMENTS.md); the implementation status recorded in that plan's section 9 predates this notebook.
+Select query-expansion and lexical-fusion weights on 500 FiQA dev queries, then evaluate five systems on 648 test queries with a frozen configuration. The runner implements the [plan preserved at its pinned source revision](https://github.com/pdmdp/FinAlign/blob/f0c006a328694de8c31bb09b398a19136f027032/demo/EXPERIMENTS.md).
 
 The completed [follow-up results](../results/fiqa-dev-test-v1/README.md) show gains from query expansion and dev-selected lexical fusion, but no statistically established additional gain from monoT5. The full dev/test run and its statistical analysis have been checked from the saved query records.
 
@@ -72,4 +72,4 @@ python -m followup.runner report --index /path/to/fiqa-index --run experiments/r
 
 For a published run, pass `--source-revision` with the full source commit SHA to every stage. The Colab notebook does this automatically. `--device cpu` is available for local checks but is much slower for generation. There is no test-query subset flag or parameter-grid override.
 
-The experiment imports the existing ranking/model code without starting the application. The original notebook and every file under `demo/` are unchanged. [Validation record](validation.json) distinguishes the preflight checks, completed Colab run and subsequent verification. The source commit pinned in the notebook is unchanged, so the logging and download improvements do not invalidate existing run checkpoints.
+The experiment imports the existing ranking/model code without starting the application. The original notebook and the demo's application and retrieval code are unchanged. The current plan page links to the completed results; its pre-run version remains at the pinned commit. [Validation record](validation.json) distinguishes the preflight checks, completed Colab run and subsequent verification. The source commit pinned in the notebook is unchanged, so documentation updates and the logging/download improvements do not invalidate existing Colab run checkpoints.

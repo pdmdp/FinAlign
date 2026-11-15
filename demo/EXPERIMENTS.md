@@ -1,6 +1,8 @@
 # Follow-up evaluation plan
 
-Status: planned, not run. This plan is written before the new parameter search and neural comparisons. It is not a preregistration of the original coursework, whose test results are already known.
+Status: completed. The full 500-dev / 648-test run and all three paired comparisons are available in the [follow-up results](../results/fiqa-dev-test-v1/README.md). The [Colab runner](../experiments/README.md) implements the protocol below.
+
+The plan was published before the follow-up parameter search and neural comparisons. Its [pre-run version at the source commit used by the notebook](https://github.com/pdmdp/FinAlign/blob/f0c006a328694de8c31bb09b398a19136f027032/demo/EXPERIMENTS.md) remains unchanged. This is not a preregistration of the original coursework, whose test results were already known. Sections 1–8 retain the planned method and report template.
 
 The question is whether query expansion, lexical fusion and reranking improve retrieval under a fixed protocol. The primary metric is mean **nDCG@10**. There are exactly three planned inferential comparisons; all three will be reported, including null or negative results.
 
@@ -111,7 +113,9 @@ Publish one table with the five system means and a second with exactly these row
 
 Include selected dev weights, complete per-query results and a plot of the difference distributions. Keep the historical notebook table separate. Discuss both losses and gains, and describe conclusions as conditional on this corpus, parameter search and previously used test set.
 
-## 9. Colab execution status
+## 9. Original execution notes
+
+These notes describe the tooling available when the plan was written. The dedicated runner and completed execution are now documented in [experiments/README.md](../experiments/README.md); the notes below are retained as historical context.
 
 The existing `evaluate.py` already supports `--split dev/test`, fixed component configurations and per-query output. A small existing-script check is:
 

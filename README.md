@@ -2,7 +2,7 @@
 
 Can semantic retrieval find relevant financial answers that keyword search misses? FinAlign compares BM25 with a passage retriever, then tests how query expansion, lexical fusion and reranking change the ranking.
 
-In the follow-up evaluation, the complete pipeline reached **nDCG@10 of 0.4294**, compared with **0.2526 for BM25**. Query expansion and a dev-selected BM25 weight improved the neural ranking; monoT5's additional gain was small and not statistically significant.
+In the follow-up evaluation, the complete pipeline reached **nDCG@10 of 0.4294**, compared with **0.2526 for BM25**. Query expansion and a dev-selected BM25 weight improved the neural ranking. The additional effect of monoT5 remains uncertain: its mean estimate is close to zero, but the interval includes both losses and gains.
 
 ## Try the live demo
 
@@ -20,11 +20,15 @@ BM25 matches the question's terms against whole documents. The neural pipeline s
 
 Each document is represented by its best passage. Its dense score can be combined with BM25, and `monot5-base-msmarco` reranks the first 50 candidates. The follow-up selected 75% dense score and 25% BM25 score after normalization. The demo retains the original equal-weight fusion. Generated text is used to search the collection; the system returns ranked documents rather than a generated answer.
 
-[Notebook](notebook/Fin_IR_Project.ipynb) · [Report](report/FinalReportIRProject.pdf) · [Slides](FinAlign-Slides.pdf) · [Method and setup](EXPERIMENT.md)
+[Coursework notebook](notebook/Fin_IR_Project.ipynb) · [Coursework report](report/FinalReportIRProject.pdf) · [Slides](FinAlign-Slides.pdf) · [Original setup](EXPERIMENT.md) · [Follow-up protocol](demo/EXPERIMENTS.md)
 
 ## Results
 
 Parameters were selected on **500 dev queries**, frozen, then evaluated on **648 test queries**. Those test queries had already influenced the original project, so this is a retrospective evaluation rather than an untouched holdout.
+
+<a href="results/fiqa-dev-test-v1/results-overview.svg">
+  <img src="results/fiqa-dev-test-v1/results-overview.svg" alt="Test nDCG@10 for five retrieval systems and paired differences with bootstrap intervals and Holm-adjusted p-values" width="760">
+</a>
 
 | Configuration | nDCG@10 | Recall@10 |
 | :--- | ---: | ---: |
@@ -34,7 +38,7 @@ Parameters were selected on **500 dev queries**, frozen, then evaluated on **648
 | Expanded BGE + BM25, alpha 0.25 | 0.4287 | 0.5047 |
 | Hybrid candidates + monoT5 | **0.4294** | **0.5073** |
 
-The three planned paired comparisons found gains from expansion (**+0.0080 nDCG@10; Holm p = 0.0076**) and lexical fusion (**+0.0114; p = 0.0094**). Reranking added **+0.0007; p = 0.9281**: this run did not establish an additional gain. Recall@10 is descriptive.
+The three planned paired comparisons found gains from expansion (**+0.0080 nDCG@10; Holm p = 0.0076**) and lexical fusion (**+0.0114; p = 0.0094**). Reranking's observed mean difference was **+0.0007; p = 0.9281**, with a marginal 95% bootstrap interval of **[−0.0146, +0.0164]**. The run establishes neither a benefit nor equivalence to skipping reranking. Recall@10 is descriptive.
 
 [Results, intervals and interpretation](results/fiqa-dev-test-v1/README.md) · [Per-query scores](results/fiqa-dev-test-v1/per_query.csv) · [Run the experiment in Colab](https://colab.research.google.com/github/pdmdp/FinAlign/blob/main/experiments/run_colab.ipynb)
 
@@ -46,7 +50,7 @@ The [original coursework results](results/recorded_metrics.json) remain separate
 
 ## Limits and next steps
 
-The paired tests account for variation across queries and the three planned comparisons, but they do not remove the effect of earlier test-set use. There is one collection and one deterministic generation setting; a new collection and repeated generation runs would test whether these findings hold more broadly. The monoT5 result does not establish equivalence or rule out a gain in another setting.
+The paired tests account for variation across queries and the three planned comparisons, but they do not remove the effect of earlier test-set use. There is one collection and one deterministic generation setting; a new collection and repeated generation runs would test whether these findings hold more broadly. The five expansion settings were close on dev, so the selected weights should not be treated as a well-separated optimum.
 
 The [follow-up notebook](experiments/README.md) saves query checkpoints and retains the frozen configuration. A useful next experiment would evaluate the fixed configurations on previously unused data and measure end-to-end latency, particularly the cost of reranking.
 
