@@ -2,7 +2,7 @@
 
 Financial document retrieval on FiQA, comparing lexical search with BGE embeddings, Qwen query expansion and monoT5 re-ranking.
 
-[Notebook](notebook/Fin_IR_Project.ipynb) · [Report](report/FinalReportIRProject.pdf) · [Slides](FinAlign-Slides.pdf) · [Experiment details](EXPERIMENT.md)
+[Live demo](https://huggingface.co/spaces/pdmdp/finalign) · [Notebook](notebook/Fin_IR_Project.ipynb) · [Report](report/FinalReportIRProject.pdf) · [Slides](FinAlign-Slides.pdf) · [Experiment details](EXPERIMENT.md)
 
 ![Recorded nDCG at 10 for six retrieval configurations](assets/retrieval-results.png)
 
@@ -25,7 +25,9 @@ The source [FiQA test collection](https://ir-datasets.com/beir.html#beir/fiqa/te
 
 ## Interactive version
 
-The [Gradio demo](demo/) compares BM25 with BGE on the same corpus. Query expansion, lexical fusion and monoT5 can be enabled separately, with stage timings and relevance metrics for known FiQA queries. It is a later extension of the notebook. See [setup](demo/DEPLOY.md), [ablation configurations](demo/EXPERIMENTS.md) and [validation status](demo/VALIDATION.md).
+The [live demo](https://huggingface.co/spaces/pdmdp/finalign) compares BM25 with BGE across 57,600 nonempty documents and 66,113 passages. Query expansion, lexical fusion and monoT5 can be enabled separately, with stage timings and relevance metrics for known FiQA queries. It runs on shared ZeroGPU hardware, so queues and usage limits apply.
+
+The [application](demo/) is a later extension of the notebook. See [setup](demo/DEPLOY.md), [ablation configurations](demo/EXPERIMENTS.md) and [validation](demo/VALIDATION.md).
 
 ## Run
 
@@ -36,7 +38,7 @@ python -m pip install -r requirements.txt
 python -m jupyter lab notebook/Fin_IR_Project.ipynb
 ```
 
-The notebook was developed in Colab and explicitly selects CUDA for dense retrieval. It also needs Java for Terrier. Run cells in order; indexing rebuilds the named index folders. The original environment was not fully locked, and sampled query expansion can change results. The full GPU pipeline has not been rerun for this portfolio update. See [setup and method notes](EXPERIMENT.md) before running it.
+The notebook was developed in Colab and explicitly selects CUDA for dense retrieval. It also needs a Java JDK for Terrier and Pyjnius. Run cells in order; indexing rebuilds the named index folders. The original environment was not fully locked, and sampled query expansion can change results. The full neural benchmark has not been rerun for this portfolio update. See [setup and method notes](EXPERIMENT.md) before running it.
 
 To redraw the figure from saved metrics, run `python scripts/plot_results.py` with Matplotlib installed.
 

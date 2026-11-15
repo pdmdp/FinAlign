@@ -27,6 +27,8 @@ hf_oauth: true
 
 # FinAlign
 
+[Open the demo](https://huggingface.co/spaces/pdmdp/finalign) · [Source and report](https://github.com/pdmdp/FinAlign)
+
 Compare BM25 with BGE passage retrieval on the FiQA corpus. Turn on Qwen query expansion, lexical fusion and monoT5 reranking to inspect how the ranking and latency change.
 
 The demo follows the [FinAlign course project](https://github.com/pdmdp/FinAlign). It uses the complete nonempty corpus: 57,600 documents split into 66,113 passages. Query variants are intermediate retrieval inputs, not answers to the visitor.

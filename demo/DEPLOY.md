@@ -15,11 +15,11 @@ python -m pip install -r requirements.txt
 python build_index.py --corpus-only --output data/fiqa-corpus
 ```
 
-Java 11 or newer is needed for Terrier. Hugging Face installs it from `packages.txt`. Model files are downloaded at startup, so the first launch takes longer than subsequent searches.
+A Java JDK, version 11 or newer, is needed for Terrier and Pyjnius. Hugging Face installs `default-jdk-headless` from `packages.txt`; Pyjnius also looks for `javac`, which a JRE-only installation does not provide. Model files are downloaded at startup, so the first launch takes longer than subsequent searches.
 
 ## Prepare the dense index once
 
-For a full corpus build, use [the Colab notebook](https://colab.research.google.com/github/pdmdp/FinAlign/blob/demo/demo/prepare_index_colab.ipynb) with a free T4 GPU runtime. Run all cells, download `fiqa-index.zip`, and upload it, still compressed, inside the Space's `data/` directory. The notebook uses the same checkpointed encoder code as the app, verifies the downloaded corpus and validates the completed archive. Colab GPU availability is not guaranteed; its limits are separate from ZeroGPU's.
+For a full corpus build, use [the Colab notebook](https://colab.research.google.com/github/pdmdp/FinAlign/blob/main/demo/prepare_index_colab.ipynb) with a free T4 GPU runtime. Run all cells, download `fiqa-index.zip`, and upload it, still compressed, inside the Space's `data/` directory. The notebook uses the same checkpointed encoder code as the app, verifies the downloaded corpus and validates the completed archive. Colab GPU availability is not guaranteed; its limits are separate from ZeroGPU's.
 
 You can also prepare the index inside the Space. This consumes the same ZeroGPU allowance used for searches and may take more than one day's free quota:
 

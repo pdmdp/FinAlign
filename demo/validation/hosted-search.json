@@ -1,0 +1,21 @@
+{
+  "date": "2026-11-15",
+  "space": "pdmdp/finalign",
+  "space_commit": "0257cde2ed0d8efce5f7bca0588b417d577e8b89",
+  "verification": "Manual browser check; settings, rankings and timings transcribed from the displayed result.",
+  "query": "what is a Tesla share?",
+  "options": {
+    "keywords": true,
+    "hyde": true,
+    "lexical": true,
+    "rerank": true
+  },
+  "index_sha256": "45b9da96081deb1f2f8c946125c413bafe7bad464fcc0b3c9ccec21300036366",
+  "processing_seconds": 2.10,
+  "server_elapsed_seconds": 4.30,
+  "top_results": {
+    "bm25": {"docno": "373133", "score": 18.3835},
+    "finalign": {"docno": "292413", "score": -0.8806}
+  },
+  "notes": "Execution check on one custom query, not a relevance or latency benchmark. Browser transfer is excluded from both timings."
+}

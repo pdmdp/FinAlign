@@ -1,6 +1,6 @@
 # Validation
 
-Checked on 15 November 2026 with Python 3.11.8 on an Apple M1 Mac and an index prepared on a Colab T4. The Space targets Python 3.12.12 and ZeroGPU; the complete hosted pipeline still needs checking after the index upload.
+Checked on 15 November 2026 with Python 3.11.8 on an Apple M1 Mac, an index prepared on a Colab T4, and a manual browser check of the hosted ZeroGPU application running Python 3.12.12.
 
 ## Completed locally
 
@@ -19,8 +19,12 @@ Every manifest checksum passed after downloading the archive. Corpus files, pass
 
 All three fixed demo queries completed against the full index. Their [results](validation/colab-retrieval.json) include a query with nDCG@10 of zero. These are execution checks on the existing examples, not a neural benchmark or a test of Qwen and monoT5.
 
-## Remaining hosted checks
+## Hosted application
 
-Upload the completed archive, verify custom and benchmark queries, and run the combined Qwen/BGE/monoT5 pipeline. Check GPU allocation, free-quota errors and startup after the index upload. Qwen generation and the full neural benchmark have not been run locally for this update.
+The uploaded index matches the validated archive byte for byte. After a rebuild, the application opens directly in search mode. The Space uses `default-jdk-headless`: the earlier JRE-only package left Pyjnius unable to locate `javac` during BM25 initialization.
+
+A manual browser check completed the query **“what is a Tesla share?”** with both Qwen expansions, BM25/BGE fusion and monoT5 reranking enabled. Both rankings were displayed. The interface reported **2.10 seconds** of processing and **4.30 seconds** elapsed on the server, including GPU wait. These are timings from one request, not a latency benchmark. The [run record](validation/hosted-search.json) identifies the deployed revision and settings.
+
+This confirms execution of the combined pipeline on a custom query. Hosted relevance metrics for the fixed FiQA examples and the behaviour when search quota is exhausted still need separate checks. Qwen generation and the full neural benchmark have not been run locally for this update.
 
 The interactive controls and evaluation script are implemented. A complete ablation study, statistical comparison and a latency study on fixed GPU hardware remain experiments to run; they are not claimed as completed results.
