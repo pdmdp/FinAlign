@@ -19,6 +19,10 @@ Java 11 or newer is needed for Terrier. Hugging Face installs it from `packages.
 
 ## Prepare the dense index once
 
+For a full corpus build, use [the Colab notebook](https://colab.research.google.com/github/pdmdp/FinAlign/blob/demo/demo/prepare_index_colab.ipynb) with a free T4 GPU runtime. Run all cells, download `fiqa-index.zip`, and upload it, still compressed, inside the Space's `data/` directory. The notebook uses the same checkpointed encoder code as the app, verifies the downloaded corpus and validates the completed archive. Colab GPU availability is not guaranteed; its limits are separate from ZeroGPU's.
+
+You can also prepare the index inside the Space. This consumes the same ZeroGPU allowance used for searches and may take more than one day's free quota:
+
 1. Open the Space and sign in with its owner account using the login button.
 2. Click **Prepare / continue index**. Each call encodes a bounded batch and checkpoints completed passages. Continue until all 66,113 passages are encoded. Calls use the free GPU allowance; if it runs out, wait for its reset and resume. Availability and total preparation time depend on the shared hardware.
 3. Download the resulting **fiqa-index.zip**.
@@ -48,3 +52,5 @@ python app.py
 `FINALIGN_INDEX_DIR` may point to an unpacked index. `FINALIGN_DEVICE` defaults to CPU locally and CUDA in a Space. `FINALIGN_ENCODER_ONLY=1` skips downloading Qwen and monoT5 for a local BGE/BM25 smoke check; expansion and reranking controls are disabled in that mode.
 
 The Space’s GPU settings determine the cost. The code does not switch hardware or buy credits. Queueing failures leave the BM25 result visible and can be retried later.
+
+For hosting without recurring charges, keep the Space on the eligible free ZeroGPU tier and commit the completed index as a repository file. No storage bucket, paid inference API or dedicated GPU is required. Visitors remain subject to ZeroGPU's usage limits and queues; the free tier does not guarantee uninterrupted access. See the current [ZeroGPU terms](https://huggingface.co/docs/hub/spaces-zerogpu) before changing hardware or purchasing credits.
