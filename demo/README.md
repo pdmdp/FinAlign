@@ -31,6 +31,14 @@ hf_oauth: true
 
 Compare BM25 with BGE passage retrieval on the FiQA corpus. Turn on Qwen query expansion, lexical fusion and monoT5 reranking to inspect how the ranking and latency change.
 
+## Try it
+
+The [public demo](https://huggingface.co/spaces/pdmdp/finalign) is free to try in your browser, with no installation or API key. Click an example question to run it, or enter an English question and select **Compare rankings**. Use **All stages** to enable the complete pipeline, then run the comparison again. **Run details** shows generated query variants and stage timings.
+
+Both rankings appear side by side on desktop; tap a method name to switch lists on mobile. Shared ZeroGPU queues and daily usage limits apply. If the neural search reaches its allowance, the BM25 results remain visible.
+
+## Method
+
 The demo follows the [FinAlign course project](https://github.com/pdmdp/FinAlign). It uses the complete nonempty corpus: 57,600 documents split into 66,113 passages. Query variants are intermediate retrieval inputs, not answers to the visitor.
 
 Rankings and timings are computed on demand. Quality metrics appear only when a question exactly matches a uniquely identified FiQA query with relevance judgments. The historical notebook results are separate from these runs.

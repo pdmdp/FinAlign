@@ -78,7 +78,10 @@ class RankingTests(unittest.TestCase):
         self.assertNotIn("<script>", output)
         self.assertNotIn("<img ", output)
         self.assertIn("&lt;script&gt;", output)
-        self.assertIn("Not listed in qrels", output)
+        # Unjudged documents carry no label; judged-relevant ones are marked.
+        self.assertNotIn('class="fa-badge"', output)
+        judged = results_html(FakeIndex(), [("a", 1.)], known={"qrels": {"a": 1}})
+        self.assertIn('class="fa-badge"', judged)
 
     def test_archive_cannot_escape_destination(self):
         with tempfile.TemporaryDirectory() as directory:

@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="286" height="54" viewBox="0 0 286 54" role="img" aria-labelledby="title">
+  <title id="title">Try the live demo</title>
+  <rect width="286" height="54" rx="8" fill="#2563eb"/>
+  <text x="22" y="33" fill="#ffffff" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="700">Try the live demo</text>
+  <path d="M241 27h21m-7-7 7 7-7 7" fill="none" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

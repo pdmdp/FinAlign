@@ -2,7 +2,27 @@
 
 Financial document retrieval on FiQA, comparing lexical search with BGE embeddings, Qwen query expansion and monoT5 re-ranking.
 
-[Live demo](https://huggingface.co/spaces/pdmdp/finalign) · [Notebook](notebook/Fin_IR_Project.ipynb) · [Report](report/FinalReportIRProject.pdf) · [Slides](FinAlign-Slides.pdf) · [Experiment details](EXPERIMENT.md)
+## Try the live demo
+
+[![Try the live demo](assets/try-demo.svg)](https://huggingface.co/spaces/pdmdp/finalign)
+
+**Public and free to try in your browser.** No installation or API key needed.
+
+1. **Run a search:** click a sample FiQA question, or enter your own question in English and select **Compare rankings**.
+2. **Compare the results:** read BM25 and FinAlign side by side, expand a document, and inspect shared results and relevance metrics. On mobile, tap the method names to switch lists. Metrics appear only for known FiQA questions with relevance judgments.
+3. **Change the pipeline:** select **All stages** or enable individual components, then run the comparison again. Open **Run details** to inspect generated query variants and time spent at each stage.
+
+<a href="https://huggingface.co/spaces/pdmdp/finalign">
+  <img src="assets/demo-preview.png" alt="Open the public demo: BM25 and BGE rankings for a FiQA question" width="640">
+</a>
+
+*BM25 and BGE on a FiQA example, from a local CPU run. Click the preview to try the demo.*
+
+The demo runs on shared [Hugging Face ZeroGPU](https://huggingface.co/docs/hub/spaces-zerogpu) hardware. Queues and daily GPU limits apply; signing in to Hugging Face gives a larger free allowance. BM25 results remain available when the neural search reaches its quota.
+
+## Recorded experiment
+
+[Notebook](notebook/Fin_IR_Project.ipynb) · [Report](report/FinalReportIRProject.pdf) · [Slides](FinAlign-Slides.pdf) · [Experiment details](EXPERIMENT.md)
 
 ![Recorded nDCG at 10 for six retrieval configurations](assets/retrieval-results.png)
 
@@ -25,7 +45,7 @@ The source [FiQA test collection](https://ir-datasets.com/beir.html#beir/fiqa/te
 
 ## Interactive version
 
-The [live demo](https://huggingface.co/spaces/pdmdp/finalign) compares BM25 with BGE across 57,600 nonempty documents and 66,113 passages. Query expansion, lexical fusion and monoT5 can be enabled separately, with stage timings and relevance metrics for known FiQA queries. It runs on shared ZeroGPU hardware, so queues and usage limits apply.
+The demo searches 57,600 nonempty documents and 66,113 passages. Its rankings, timings and per-question metrics are computed on demand, separately from the recorded notebook experiment above.
 
 The [application](demo/) is a later extension of the notebook. See [setup](demo/DEPLOY.md), [ablation configurations](demo/EXPERIMENTS.md) and [validation](demo/VALIDATION.md).
 

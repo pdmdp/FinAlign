@@ -1,0 +1,39 @@
+{
+  "checked_on": "2026-11-15",
+  "method": "Playwright browser checks of the local Gradio application and the public Space",
+  "space_commit": "99436a31eaf7f9d9a2d605adf07cf95e6b5ad1b6",
+  "local": {
+    "device": "cpu",
+    "encoder_only": true,
+    "checks": [
+      "The example button completes BM25/BGE retrieval through the updated Gradio callbacks; both top-10 lists render",
+      "The first BGE document and nDCG@10 match the existing Colab-index execution record",
+      "Full documents, highlighted query terms, per-query metrics and latency details render",
+      "Mobile method tabs switch by pointer and keyboard; no horizontal overflow at 390px and 768px",
+      "Presets respect encoder-only mode; empty questions show validation without starting neural search"
+    ],
+    "index": "Full Colab index: 57,600 documents and 66,113 passages",
+    "python_version": "3.11.8",
+    "gradio_version": "6.32.0"
+  },
+  "hosted": {
+    "checks": [
+      "Final public interface loads without sign-in",
+      "All stages and BGE only presets select the expected options",
+      "Quota notice is visible and BM25 results remain usable",
+      "Mobile tabs and quota state work without JavaScript errors or horizontal overflow"
+    ],
+    "neural_completed": false,
+    "neural_limitation": "The anonymous verification session reached its ZeroGPU runs limit; full neural execution was not repeated on this revision."
+  },
+  "passed": true,
+  "automated_tests": {
+    "command": "python -m unittest discover -s tests -v",
+    "passed": 14
+  },
+  "readme_preview": {
+    "source": "Local CPU BGE-only execution",
+    "display_width_px": 640,
+    "repository_path": "assets/demo-preview.png"
+  }
+}
