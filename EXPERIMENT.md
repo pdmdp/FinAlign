@@ -32,3 +32,9 @@ The README figure can be regenerated without downloading data or models:
 python -m pip install matplotlib
 python scripts/plot_results.py
 ```
+
+## Recorded results and later application
+
+The root README's metric table and figure describe the saved notebook experiment. The original test queries also informed design choices; only the early lexical comparison includes significance tests. The later neural comparisons were not accompanied by paired tests. No full neural benchmark was rerun merely to publish or restyle the demo.
+
+The [interactive application](demo/) is a later implementation of the method, with pinned model revisions, query-derived generation seeds and an index covering 57,600 nonempty documents and 66,113 passages. Its per-question rankings and timings are new runs. See the [execution checks](demo/VALIDATION.md) and [planned follow-up experiment](demo/EXPERIMENTS.md).

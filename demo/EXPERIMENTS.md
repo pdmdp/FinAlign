@@ -1,51 +1,134 @@
-# Component ablations and latency
+# Follow-up evaluation plan
 
-The interactive controls inspect one query at a time. They do not establish that a component improves retrieval across FiQA. `evaluate.py` runs the same components over a query split and saves each ranking, generated variant, seed and stage timing.
+Status: planned, not run. This plan is written before the new parameter search and neural comparisons. It is not a preregistration of the original coursework, whose test results are already known.
 
-## Comparisons
+The question is whether query expansion, lexical fusion and reranking improve retrieval under a fixed protocol. The primary metric is mean **nDCG@10**. There are exactly three planned inferential comparisons; all three will be reported, including null or negative results.
 
-| Configuration | What it measures |
-| :--- | :--- |
-| `bm25` | Lexical baseline |
-| `bge` | Passage retrieval from the original query |
-| `bge_keywords` | Effect of technical keyword expansion |
-| `bge_hyde` | Effect of hypothetical expansion |
-| `bge_expanded` | Both query expansions |
-| `hybrid` | Added lexical fusion |
-| `full` | Added monoT5 reranking |
-| `full_without_keywords` | Remove keyword expansion from the full pipeline |
-| `full_without_hyde` | Remove hypothetical expansion from the full pipeline |
-| `full_without_bm25` | Remove lexical fusion from the full pipeline |
+## 1. Data and separation of roles
 
-`hybrid` is also the full system without reranking. Disabled query variants contribute zero; remaining weights are not retuned. The original 0.70/0.15/0.15 weights and candidate depths remain fixed. Removing a component can change the candidate set; this is part of its measured effect, not a controlled reranker-only comparison.
+Use the FiQA/BEIR **500 development queries** to select weights and the **648 test queries** for the frozen comparison. The prepared index currently contains all 500 and 648 queries with positive relevance judgments. Verify query IDs, split disjointness and counts before a run; stop on a mismatch rather than silently dropping queries.
 
-## Run
+The corpus is shared across splits: 57,600 nonempty documents and 66,113 passages. Reuse the validated Colab index, whose archive SHA-256 is `45b9da96081deb1f2f8c946125c413bafe7bad464fcc0b3c9ccec21300036366`. Retain the model revisions in [models.lock.json](models.lock.json), the index manifest and the actual package versions used in Colab. [Index validation](validation/colab-index.json) records the existing archive checks.
 
-Start with a small development-set run to check the environment:
+The original 648-query test set influenced earlier design choices. New development-only selection does not make it an untouched holdout again. This experiment is a retrospective follow-up with a better specified selection procedure; it cannot provide a wholly independent confirmation of the original design. A later evaluation on a previously unused collection would address that separate question.
+
+## 2. Five systems, three comparisons
+
+| ID | System | Role |
+| :--- | :--- | :--- |
+| `L` | Terrier BM25 | Descriptive lexical reference |
+| `B` | BGE retrieval from the original question | Neural reference |
+| `E` | BGE with keyword and hypothetical-answer variants | Query expansion |
+| `H` | `E` combined with BM25 | Lexical fusion |
+| `F` | monoT5 reranking of the first 50 results from `H` | Reranking |
+
+| Comparison | Per-query difference | Question |
+| :--- | :--- | :--- |
+| C1 | `nDCG@10(E) − nDCG@10(B)` | Does the joint query-expansion stage help? |
+| C2 | `nDCG@10(H) − nDCG@10(E)` | Does lexical fusion help after expansion? |
+| C3 | `nDCG@10(F) − nDCG@10(H)` | Does reranking help the selected hybrid ranking? |
+
+All tests are two-sided. C1 combines the two expansion types; it does not identify their separate effects. C2 may change the retrieved candidate set as well as the order. C3 uses exactly the same first 50 candidates before and after reranking, so candidate selection is held fixed for that comparison.
+
+Report BM25 and all five system means, but do not add a fourth significance test for the overall system versus BM25. Additional comparisons, if explored later, must be labelled exploratory and kept separate from this family.
+
+## 3. Keep the retrieval method fixed
+
+Keep the BGE retrieval instruction, 250-word non-overlapping passages, 400 passages per variant, BM25 depth of 1,000 and monoT5 depth of 50. Use the existing query cleaning, prompts and query-derived generation seed. Do not tune models, prompts, passage size, candidate depth, generation settings or seeds in this experiment.
+
+For each variant, min-max normalize the scores within its retrieved passages. Sum weighted scores by passage, treating missing scores as zero, then take the maximum passage score for each document. For lexical fusion, normalize the dense and lexical document scores separately, using their first 1,000 documents, and combine their union. Retain deterministic document-ID ordering for score ties.
+
+The demo currently uses fixed variant weights of 0.70/0.15/0.15 and equal lexical/dense weights. The follow-up may select different values in its benchmark configuration; it does not change the live demo defaults or interface.
+
+## 4. Development-set parameter search
+
+First select the expansion weights using mean nDCG@10 across all 500 dev queries. Use only these five candidates, in the order `(original, keywords, hypothetical answer)`:
+
+| Candidate | Original | Keywords | Hypothetical answer |
+| :--- | ---: | ---: | ---: |
+| Historical setting | 0.70 | 0.15 | 0.15 |
+| More expansion | 0.50 | 0.25 | 0.25 |
+| Less expansion | 0.85 | 0.075 | 0.075 |
+| More keyword weight | 0.70 | 0.20 | 0.10 |
+| More hypothetical-answer weight | 0.70 | 0.10 | 0.20 |
+
+If means differ by at most `1e-12`, prefer the historical setting if tied; otherwise use the first tied candidate in this table. This yields one expansion setting, reused by `E`, `H` and `F`.
+
+Next select the lexical weight `alpha` from **{0, 0.25, 0.50, 0.75, 1}**, again on all 500 dev queries, using:
+
+```text
+H(document) = (1 − alpha) × normalized_dense_score
+              + alpha × normalized_BM25_score
+```
+
+At `alpha = 0`, return the dense ranking exactly; at `alpha = 1`, return BM25 exactly. Do not add zero-weight-only candidates at either endpoint. Equal weighting has the same ranking as the demo's unscaled score sum. If tied within `1e-12`, choose the smallest alpha.
+
+Do not tune the weights separately after adding monoT5: `F` reranks the same selected `H`. If alpha zero wins, C2 is an identical-ranking comparison and must still be reported as such; do not substitute a more favourable comparison. The grid is fixed before looking at new test outputs and is not expanded in response to them.
+
+## 5. Freeze before test evaluation
+
+Write and retain a `frozen_config.json` containing:
+
+- The plan and benchmark source commit, UTC freeze time and selected weights.
+- All dev candidate means, the tie-breaking decisions and the ordered dev/test query IDs.
+- The corpus/index hashes, model revisions and package versions.
+- Generation prompts/settings and query-seed rule.
+- The three comparisons, primary metric, resampling settings and reporting rules below.
+
+Save the file and its SHA-256 before running or inspecting the new test results. Reuse that file for every test configuration. If a bug requires a correction, record it and rerun every affected system under the corrected frozen implementation; do not combine incompatible partial runs.
+
+## 6. Test execution and retained outputs
+
+Run all five systems over all 648 test queries. Save query IDs, generated variants, component scores, final rankings and per-query nDCG@10. Keep Recall@10 as a descriptive secondary metric. Do not use MAP as another primary endpoint: returned ranking depths differ, particularly after reranking.
+
+An empty returned ranking receives nDCG@10 zero. A runtime failure is not a zero-score observation: checkpoint it, repair or resume the failed computation, and require a complete paired set before reporting results. Do not exclude difficult or unfavourable queries.
+
+Generate each query's two expansions once and retain them. Cache each variant's top-400 passage scores and the BM25 ranking so dev weight combinations reuse the same inputs. Cache monoT5 scores for the selected candidates. Include query text, model revision, prompt/settings and seed in cache identities. Validate cache keys on resume.
+
+One completed result per query and system is the unit for effectiveness. Repeated timings are not additional query observations. Cache-building times may be recorded for operational use, but cached recombination is not a measurement of end-to-end neural search latency.
+
+## 7. Paired inference
+
+For each comparison, form the vector of 648 per-query differences in the direction shown in the table. Report the mean difference, median difference and counts of improved, tied and worsened queries. Use absolute nDCG differences as the main effect size.
+
+**Bootstrap intervals.** Draw 20,000 bootstrap samples of query IDs with replacement, preserving each query's paired system scores. Use the same sampled query indices for all three comparisons and random seed `2026`. Report percentile 95% intervals for the mean differences. These are marginal intervals for each comparison, not simultaneous family-wide intervals.
+
+**Paired randomization test.** Under the null of exchangeable paired system scores, swap the two system scores independently within each query. Use 100,000 random sign assignments, seed `2027`, and the absolute mean difference as the two-sided statistic. Estimate the raw p-value as `(1 + number of randomized statistics at least as extreme as observed) / 100001`. Process permutations in batches to bound memory. If all differences are zero, report p = 1 and interval [0, 0].
+
+**Multiple comparisons.** Apply Holm's correction to the three raw p-values as one family, with family-wise alpha 0.05. Report both raw and adjusted values. Use the adjusted values for the planned significance decisions; the marginal bootstrap intervals describe effect uncertainty and do not replace that correction.
+
+Do not change to a one-sided test after seeing a direction, choose a different test because it gives significance, or count repeat runs as independent observations. A non-significant result means this procedure did not establish a difference; it does not prove equivalence.
+
+## 8. Report template
+
+Publish one table with the five system means and a second with exactly these rows:
+
+| Comparison | Mean delta | 95% paired bootstrap CI | Improved / tied / worsened | Raw p | Holm-adjusted p |
+| :--- | ---: | :--- | :--- | ---: | ---: |
+| C1: expansion | pending | pending | pending | pending | pending |
+| C2: lexical fusion | pending | pending | pending | pending | pending |
+| C3: reranking | pending | pending | pending | pending | pending |
+
+Include selected dev weights, complete per-query results and a plot of the difference distributions. Keep the historical notebook table separate. Discuss both losses and gains, and describe conclusions as conditional on this corpus, parameter search and previously used test set.
+
+## 9. Colab execution status
+
+The existing `evaluate.py` already supports `--split dev/test`, fixed component configurations and per-query output. A small existing-script check is:
 
 ```bash
 python evaluate.py --index data/fiqa-index --output runs/dev-smoke \
-  --split dev --device cuda --limit 20 --repeats 1
+  --split dev --device cuda --limit 20 --repeats 1 \
+  --configurations bm25,bge,bge_expanded,hybrid,full
 ```
 
-For the full development set, omit `--limit`. The default uses three timed repeats after one warm-up per configuration. The original course test set influenced design choices, so it should not be described as an untouched evaluation set for the later work. Choose new parameters on development queries, freeze them, and report test performance with that limitation.
+This is only an environment check and does not implement the complete plan above. The current engine hard-codes the historical weights, and the script does not yet provide the weight search, resumable component cache, frozen-config enforcement or statistical analysis. Those belong in a dedicated benchmark/Colab runner, checked on dev or synthetic inputs before the full run. The 20-query smoke sample must not be used as a substitute for selecting weights on all 500 dev queries.
 
-Do not run the benchmark inside a visitor callback or assume a full evaluation fits within a daily ZeroGPU allowance. Use an existing research GPU or an available free notebook session, and retain the output between sessions.
+Run the full experiment in Colab or another available CUDA environment, not in the public Space's visitor callbacks. Save checkpoints and the frozen configuration outside Colab's temporary runtime before disconnecting. The existing passage index can be reused; there is no need to rebuild 66,113 embeddings. Free GPU availability and session duration are not guaranteed. No paid inference API or change to the Space hardware is part of this plan.
 
-Each run writes:
+## References and provenance
 
-- `run.json`: query IDs, model revisions, environment, index provenance and initialization time.
-- `queries.jsonl`: complete returned rankings, binary FiQA metrics, query variants, seeds and per-stage timings. Repeat 0 is warm-up.
-- `summary.json`: mean effectiveness over unique queries and latency p50/p95 across measured repetitions.
+- [FiQA dev and test definitions](https://ir-datasets.com/beir.html#beir/fiqa/dev).
+- [Original notebook](../notebook/Fin_IR_Project.ipynb) and [recorded metrics](../results/recorded_metrics.json).
+- [Cawley and Talbot: selection bias in performance evaluation](https://www.jmlr.org/papers/v11/cawley10a.html).
 
-The metrics are nDCG@10, AP and Recall@10. AP is limited by the returned ranking: monoT5 returns at most 50 documents, BM25 up to 1,000, and dense retrieval up to 400 passages per variant before document aggregation. This matches the candidate-depth issue in the notebook; report it alongside MAP comparisons.
-
-GPU work is synchronized before and after stage measurements. Benchmark timings exclude model loading, GPU queueing and browser transfer. The interactive page reports processing time and server elapsed time (including the wait for GPU allocation) separately; browser transfer is not measured. It includes BM25 because it displays the baseline alongside FinAlign; benchmark totals exclude the baseline from configurations that do not use lexical fusion. Indexing is offline and should be reported separately.
-
-Repeated timings are not independent relevance observations. Compare per-query deltas, inspect losses as well as gains, and use a paired uncertainty estimate before making claims about small metric differences. No new full-benchmark improvement or state-of-the-art claim is made by adding this demo.
-
-## Differences from the course run
-
-The original notebook is retained unchanged. The demo extracts its ranking method into modules, uses exact NumPy dot products over the BGE passage vectors, pins model revisions and sets a query-derived seed for sampled hypothetical expansions. Terrier still provides BM25 and `pyterrier_t5` still provides monoT5 scoring.
-
-The original package environment was not locked, and the original hypothetical expansions were not retained. This implementation is a new execution of the method, not a bit-for-bit replay of the historical scores. Package, device and floating-point differences can change rankings. Original recorded metrics remain in the root repository’s `results/` directory.
+The original package environment and sampled hypothetical expansions were not retained. Even with the same method, new package, device and floating-point choices can change rankings. The frozen follow-up is a new execution, not a bit-for-bit replay of the historical scores.

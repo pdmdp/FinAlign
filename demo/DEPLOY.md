@@ -54,3 +54,11 @@ python app.py
 The Space’s GPU settings determine the cost. The code does not switch hardware or buy credits. Queueing failures leave the BM25 result visible and can be retried later.
 
 For hosting without recurring charges, keep the Space on the eligible free ZeroGPU tier and commit the completed index as a repository file. No storage bucket, paid inference API or dedicated GPU is required. Visitors remain subject to ZeroGPU's usage limits and queues; the free tier does not guarantee uninterrupted access. See the current [ZeroGPU terms](https://huggingface.co/docs/hub/spaces-zerogpu) before changing hardware or purchasing credits.
+
+## Interface ownership and synchronization
+
+The reference interface is the one on [the Hugging Face Space](https://huggingface.co/spaces/pdmdp/finalign/tree/main). The GitHub copies `demo/app.py` and `demo/finalign/presentation.py` mirror the Space's `app.py` and `finalign/presentation.py`.
+
+Discuss interface changes with Matteo before editing either copy. To synchronize an agreed Space revision, record its commit SHA, compare both files against that exact revision, check the changes, and copy them to GitHub together. Recheck the GitHub branch head before committing so a concurrent change is not overwritten.
+
+Documentation updates and benchmark work do not deploy to the Space. A benchmark may use its own frozen configuration without changing the live interface or its default retrieval settings.
