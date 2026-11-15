@@ -1,0 +1,65 @@
+{
+  "format": 1,
+  "checked_at": "2026-11-15T19:54:14.022Z",
+  "source_commit": "f0c006a328694de8c31bb09b398a19136f027032",
+  "automated_tests": {
+    "passed": 18,
+    "failed": 0,
+    "checks": [
+      "parameter-grid and endpoint rules",
+      "nDCG and Recall against ir_measures",
+      "Holm correction and paired resampling",
+      "exact small-sample randomization reference",
+      "split counts and disjoint query IDs",
+      "frozen configuration and cache integrity",
+      "interruption recovery and incomplete-report rejection",
+      "reranker candidate-set preservation"
+    ]
+  },
+  "real_dev_check": {
+    "device": "CPU",
+    "query_ids": [
+      "1",
+      "1003"
+    ],
+    "components": [
+      "Terrier BM25",
+      "BGE original-query retrieval"
+    ],
+    "passage_depth": 400,
+    "lexical_depth": 1000,
+    "bge_ranking_matches_existing_implementation": true,
+    "equal_weight_fusion_matches_existing_implementation": true
+  },
+  "synthetic_end_to_end": {
+    "test_queries": 648,
+    "systems": 5,
+    "planned_comparisons": 3,
+    "bootstrap_samples": 20000,
+    "random_sign_assignments": 100000,
+    "complete_report": true,
+    "zero_difference_comparison_retained": true,
+    "figure_visually_checked": true,
+    "notebook_export_cell_executed": true,
+    "zip_contents_checked": true,
+    "note": "Synthetic fixtures validate the workflow; they are not FiQA effectiveness results."
+  },
+  "notebook": {
+    "schema_valid": true,
+    "code_cells_compile": true,
+    "outputs_empty": true,
+    "source_files_checksum_pinned": true
+  },
+  "not_run": [
+    "Full 500-query dev selection",
+    "Full 648-query test evaluation",
+    "Full-model smoke check on a Colab T4",
+    "Actual Google Drive mount/resume on Colab"
+  ],
+  "limitation": "The local full-model smoke check could not be completed because available storage was insufficient. The notebook runs two real dev queries through BGE, Qwen and monoT5 on Colab before selecting parameters.",
+  "unchanged": [
+    "Every existing file under demo/",
+    "The original coursework notebook and report",
+    "The live Hugging Face Space"
+  ]
+}
