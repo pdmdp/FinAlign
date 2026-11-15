@@ -2,7 +2,7 @@
 
 Can semantic retrieval find relevant financial answers that keyword search misses? FinAlign compares BM25 with a passage retriever, then tests how query expansion, lexical fusion and reranking change the ranking.
 
-In the recorded course experiment, the complete pipeline reached **nDCG@10 of 0.4213**, compared with **0.2526 for BM25**. Most of the improvement came from dense retrieval with query expansion; adding lexical scores did not improve that configuration on its own.
+In the follow-up evaluation, the complete pipeline reached **nDCG@10 of 0.4294**, compared with **0.2526 for BM25**. Query expansion and a dev-selected BM25 weight improved the neural ranking; monoT5's additional gain was small and not statistically significant.
 
 ## Try the live demo
 
@@ -18,34 +18,37 @@ In the recorded course experiment, the complete pipeline reached **nDCG@10 of 0.
 
 BM25 matches the question's terms against whole documents. The neural pipeline splits documents into 250-word passages and uses `bge-base-en-v1.5` to retrieve passages by meaning. `Qwen2.5-1.5B-Instruct` supplies two extra search inputs: financial keywords and a hypothetical answer. The original query and the two variants receive weights of 0.70, 0.15 and 0.15 after score normalization.
 
-Each document is represented by its best passage. Its dense score can be combined with BM25, and `monot5-base-msmarco` reranks the first 50 candidates. Generated text is used to search the collection; the system returns ranked documents rather than a generated answer.
+Each document is represented by its best passage. Its dense score can be combined with BM25, and `monot5-base-msmarco` reranks the first 50 candidates. The follow-up selected 75% dense score and 25% BM25 score after normalization. The demo retains the original equal-weight fusion. Generated text is used to search the collection; the system returns ranked documents rather than a generated answer.
 
 [Notebook](notebook/Fin_IR_Project.ipynb) · [Report](report/FinalReportIRProject.pdf) · [Slides](FinAlign-Slides.pdf) · [Method and setup](EXPERIMENT.md)
 
 ## Results
 
-![Recorded nDCG at 10 for six retrieval configurations](assets/retrieval-results.png)
+Parameters were selected on **500 dev queries**, frozen, then evaluated on **648 test queries**. Those test queries had already influenced the original project, so this is a retrospective evaluation rather than an untouched holdout.
 
-| Configuration | nDCG@10 | MAP |
+| Configuration | nDCG@10 | Recall@10 |
 | :--- | ---: | ---: |
-| TF-IDF | 0.2533 | 0.2096 |
-| BM25 | 0.2526 | 0.2104 |
-| BM25 + RM3 | 0.2454 | 0.2065 |
-| BGE chunks + query expansion | 0.4159 | **0.3569** |
-| BM25 + BGE chunks + query expansion | 0.4040 | 0.3410 |
-| Hybrid candidates + monoT5 | **0.4213** | 0.3561 |
+| BM25 | 0.2526 | 0.3097 |
+| BGE, original query | 0.4094 | 0.4830 |
+| BGE + query expansion | 0.4173 | 0.4896 |
+| Expanded BGE + BM25, alpha 0.25 | 0.4287 | 0.5047 |
+| Hybrid candidates + monoT5 | **0.4294** | **0.5073** |
 
-nDCG@10 measures how highly relevant documents appear in the first ten results. Reranking recovers the highest nDCG@10 after lexical fusion lowers it; the dense pipeline retains the highest MAP. These are saved notebook results, with [values and provenance](results/recorded_metrics.json). Live demo searches are separate executions.
+The three planned paired comparisons found gains from expansion (**+0.0080 nDCG@10; Holm p = 0.0076**) and lexical fusion (**+0.0114; p = 0.0094**). Reranking added **+0.0007; p = 0.9281**: this run did not establish an additional gain. Recall@10 is descriptive.
+
+[Results, intervals and interpretation](results/fiqa-dev-test-v1/README.md) · [Per-query scores](results/fiqa-dev-test-v1/per_query.csv) · [Run the experiment in Colab](https://colab.research.google.com/github/pdmdp/FinAlign/blob/main/experiments/run_colab.ipynb)
+
+The [original coursework results](results/recorded_metrics.json) remain separate: the final pipeline scored 0.4213 nDCG@10, and equal-weight lexical fusion lowered the dense pipeline's score. The follow-up supports a narrower conclusion: lexical weighting matters, and the 25% setting selected on dev helped in this run. Live demo searches are separate executions.
 
 ## Contribution
 
 **Matteo Pietro Di Pilato, Lorenzo Cinquemani and Lorenzo Marchioni** · Information Retrieval and Recommender Systems, BSc in Artificial Intelligence. Matteo implemented the retrieval pipelines and ran the evaluation. The interactive application is a later extension.
 
-## Limits and next experiment
+## Limits and next steps
 
-The same 648 FiQA test queries informed the original design choices and evaluation. The results are exploratory, and statistical significance was not established for the final neural comparisons. MAP also depends on the different ranking depths returned by the systems.
+The paired tests account for variation across queries and the three planned comparisons, but they do not remove the effect of earlier test-set use. There is one collection and one deterministic generation setting; a new collection and repeated generation runs would test whether these findings hold more broadly. The monoT5 result does not establish equivalence or rule out a gain in another setting.
 
-The [follow-up experiment](experiments/README.md) implements three planned comparisons, development-set parameter selection and paired analysis on the test queries, retaining the limitation that this test set was used before. [Run it in Colab](https://colab.research.google.com/github/pdmdp/FinAlign/blob/main/experiments/run_colab.ipynb); the notebook saves checkpoints and freezes the selected parameters before test evaluation. The full follow-up results are still pending.
+The [follow-up notebook](experiments/README.md) saves query checkpoints and retains the frozen configuration. A useful next experiment would evaluate the fixed configurations on previously unused data and measure end-to-end latency, particularly the cost of reranking.
 
 The demo searches 57,600 nonempty documents and 66,113 passages from the historical FiQA collection. Shared ZeroGPU queues and daily limits apply; BM25 remains available when the neural allowance is exhausted. These documents and generated query variants are not current financial advice.
 
@@ -58,6 +61,6 @@ python -m pip install -r requirements.txt
 python -m jupyter lab notebook/Fin_IR_Project.ipynb
 ```
 
-The notebook expects CUDA and a Java JDK. See [notebook setup](EXPERIMENT.md) for the original environment and indexing behaviour, or [demo setup](demo/DEPLOY.md) to run the application. [Validation](demo/VALIDATION.md) records the execution checks. The result figure can be regenerated with `python scripts/plot_results.py` and Matplotlib.
+The notebook expects CUDA and a Java JDK. See [notebook setup](EXPERIMENT.md) for the original environment and indexing behaviour, or [demo setup](demo/DEPLOY.md) to run the application. [Validation](demo/VALIDATION.md) records the demo checks. Recreate the follow-up figure with `python experiments/plot_results.py`; the coursework figure uses `python scripts/plot_results.py`. Both plotting scripts require Matplotlib.
 
 Code: [MIT](LICENSE). Datasets and pretrained models retain their own licenses.

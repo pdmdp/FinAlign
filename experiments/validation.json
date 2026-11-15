@@ -50,16 +50,57 @@
     "outputs_empty": true,
     "source_files_checksum_pinned": true
   },
-  "not_run": [
+  "unchanged": [
+    "Every existing file under demo/",
+    "The original coursework notebook and report",
+    "The live Hugging Face Space"
+  ],
+  "not_run_at_preflight": [
     "Full 500-query dev selection",
     "Full 648-query test evaluation",
     "Full-model smoke check on a Colab T4",
     "Actual Google Drive mount/resume on Colab"
   ],
-  "limitation": "The local full-model smoke check could not be completed because available storage was insufficient. The notebook runs two real dev queries through BGE, Qwen and monoT5 on Colab before selecting parameters.",
-  "unchanged": [
-    "Every existing file under demo/",
-    "The original coursework notebook and report",
-    "The live Hugging Face Space"
-  ]
+  "preflight_limitation": "The local full-model smoke check could not be completed because available storage was insufficient. The notebook runs two real dev queries through BGE, Qwen and monoT5 on Colab before selecting parameters.",
+  "completed_run": {
+    "date": "2026-11-15",
+    "source_commit": "f0c006a328694de8c31bb09b398a19136f027032",
+    "results": "../results/fiqa-dev-test-v1/README.md",
+    "verification": "../results/fiqa-dev-test-v1/verification.json",
+    "dev_queries": 500,
+    "test_queries": 648,
+    "full_model_smoke_passed": true,
+    "statistics_complete": true,
+    "figure_regenerated_from_saved_results": true,
+    "actual_colab_environment": {
+      "python": "3.13.16",
+      "gpu": "Tesla T4",
+      "torch": "2.8.0+cu126"
+    },
+    "subsequent_verification": {
+      "checkpoints": 2446,
+      "metric_pairs": 3240,
+      "independent_reference": "ir_measures 0.4.3",
+      "full_dev_grid_recomputed": true,
+      "statistical_analysis_recomputed": true
+    },
+    "notebook_recovery_checks": {
+      "passed": 2,
+      "failed": 0,
+      "source_revision_unchanged": true,
+      "checks": [
+        "stderr and traceback preserved in stage log",
+        "checkpoint ZIP exports after a report failure without starting a subprocess"
+      ]
+    },
+    "current_local_test_suite": {
+      "passed": 20,
+      "failed": 0
+    },
+    "still_unverified": [
+      "Actual interrupted inference/resume across Colab runtimes",
+      "Cause of the original Colab plotting exception",
+      "Full execution of the revised logging/download notebook on Colab"
+    ]
+  }
 }
