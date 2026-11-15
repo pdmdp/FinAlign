@@ -1,0 +1,79 @@
+{
+  "date": "2026-11-15",
+  "dataset": "beir/fiqa/test",
+  "documents": 57600,
+  "query_count": 648,
+  "configuration": "BM25, Terrier 5.11, 1000 documents",
+  "repeats": 1,
+  "warmup_queries": 1,
+  "device": "CPU",
+  "hardware": "Apple M1, 8 GB",
+  "python": "3.11.8",
+  "packages": {
+    "torch": "2.8.0",
+    "transformers": "5.12.1",
+    "sentence-transformers": "6.3.0",
+    "pyterrier": "1.1.2",
+    "numpy": "2.2.6"
+  },
+  "source_manifest": {
+    "format": 1,
+    "dense_ready": false,
+    "created_utc": "2026-11-15T14:45:45.072781+00:00",
+    "dataset": "beir/fiqa",
+    "documents": 57600,
+    "passages": 66113,
+    "chunk_words": 250,
+    "embedding_dimensions": 768,
+    "encoder_max_tokens": 512,
+    "device": "cpu",
+    "terrier_version": "5.11",
+    "packages": {
+      "torch": "2.8.0",
+      "numpy": "2.2.6",
+      "sentence-transformers": "6.3.0",
+      "transformers": "5.12.1",
+      "python-terrier": "1.0",
+      "pyterrier": "1.1.2",
+      "ir-datasets": "0.5.11"
+    },
+    "files": {
+      "DATA-LICENSE.txt": "b6ed0a77ae833a6de945a0979f474bf3ffae14d8d170406d1e0426762b1c8e19",
+      "documents.jsonl": "df87f894168ef543fa9f107d1ee72fcfa994548ce2b520706be8a3d581f6eb94",
+      "models.json": "d3dbdbbd4ed418014231eb595dd913c87823511fde82012dd4e9714c9e8232e4",
+      "passages.json": "c2aebbe3bd98498082c05e95818d08285b14c244a78d9c603c95acad8ebf10ea",
+      "queries.json": "09f1413a4be385f4252cad8086d93e7f1c3b988768c262b108b983b7ac587469",
+      "terrier/data.direct.bf": "0d1686944244b98f2a4b7528f64bde4764e6829f66cb9d12d2173b1982ad1ca9",
+      "terrier/data.document.fsarrayfile": "b03f1cda0fbd84a36d682b01489e0cde3293e03cbddb5dbf1646b4ca7616e8a2",
+      "terrier/data.inverted.bf": "e8d27ab7f5225eae0783ca96946d53a38edc62a7d7b2c7f44cbd19e11c760b8a",
+      "terrier/data.lexicon.fsomapfile": "e54fb7a66ad5203cf6145bb1acb0e437507c84d20aa7cc714234c6e1688b37e6",
+      "terrier/data.lexicon.fsomaphash": "b34319911e5878ba11022f2ea5706da49339a8495c43361fc6e6168df4e73ede",
+      "terrier/data.lexicon.fsomapid": "d4454c22c33ae085716860fdc334869c7d27daa5660f1aeb188c79c1d947d533",
+      "terrier/data.meta-0.fsomapfile": "bd7e15c30b62dd366d1e7d43723bb8c7aed456bb7fb9e3c4f20b9bc9ea1c5129",
+      "terrier/data.meta.idx": "967160fa293d1c3878be268f2ff2e72a1fc0dad59e4d5d542055bf9919de728f",
+      "terrier/data.meta.zdata": "5083452a7005ec18167ebfc876e4daee73d36e0015690f0daff89d41c76f605b",
+      "terrier/data.properties": "9969412ddf182794bad9e3dbeb66dfe69ae1e75ade1008f3597ffa36b8689b1e"
+    }
+  },
+  "summary": {
+    "bm25": {
+      "queries": 648,
+      "timed_runs": 648,
+      "effectiveness": {
+        "nDCG@10": 0.2526335752535022,
+        "AP": 0.21041877427079766,
+        "Recall@10": 0.3097077648003574
+      },
+      "latency_ms": {
+        "BM25": {
+          "p50": 21.467416896484792,
+          "p95": 27.321145415771753
+        },
+        "Total": {
+          "p50": 21.711208042688668,
+          "p95": 27.63901633443311
+        }
+      }
+    }
+  }
+}

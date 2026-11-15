@@ -1,0 +1,18 @@
+{
+  "encoder": {
+    "id": "BAAI/bge-base-en-v1.5",
+    "revision": "a5beb1e3e68b9ab74eb54cfd186867f64f240e1a"
+  },
+  "expander": {
+    "id": "Qwen/Qwen2.5-1.5B-Instruct",
+    "revision": "989aa7980e4cf806f80c7fef2b1adb7bc71aa306"
+  },
+  "reranker": {
+    "id": "castorini/monot5-base-msmarco",
+    "revision": "891f24ce967761cac53e544481e7aeaf3c1fad80"
+  },
+  "t5_tokenizer": {
+    "id": "google-t5/t5-base",
+    "revision": "a9723ea7f1b39c1eae772870f3b547bf6ef7e6c1"
+  }
+}

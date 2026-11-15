@@ -5,3 +5,6 @@ __pycache__/
 terrier_index/
 *.flex/
 .env
+demo/data/
+demo/.index/
+demo/runs/

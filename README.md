@@ -23,6 +23,10 @@ Documents are split into non-overlapping 250-word chunks. `bge-base-en-v1.5` ret
 
 The source [FiQA test collection](https://ir-datasets.com/beir.html#beir/fiqa/test) contains 57,638 documents, 648 queries and 1,706 relevance judgments. These are exploratory results: the same query set informed the design choices, and significance was not established for every neural comparison. [Recorded values and provenance](results/recorded_metrics.json) are included.
 
+## Interactive version
+
+The [Gradio demo](demo/) compares BM25 with BGE on the same corpus. Query expansion, lexical fusion and monoT5 can be enabled separately, with stage timings and relevance metrics for known FiQA queries. It is a later extension of the notebook. See [setup](demo/DEPLOY.md), [ablation configurations](demo/EXPERIMENTS.md) and [validation status](demo/VALIDATION.md).
+
 ## Run
 
 ```bash

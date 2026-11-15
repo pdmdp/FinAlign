@@ -1,0 +1,16 @@
+gradio==6.32.0
+spaces==0.52.0
+torch==2.8.0
+transformers==5.12.1
+sentence-transformers==6.3.0
+huggingface-hub==1.21.0
+python-terrier==1.0
+pyterrier[java]==1.1.2
+pyterrier-alpha==0.16.5
+pyterrier-t5 @ git+https://github.com/terrierteam/pyterrier_t5.git@7d714eeb4f95d62b91cbf1ba11a829b633d90d02
+sentencepiece==0.2.1
+ir-datasets==0.5.11
+numpy==2.2.6
+pandas==2.2.3
+filelock==4.2.10
+ir-measures==0.4.3
