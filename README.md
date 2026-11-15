@@ -1,198 +1,64 @@
-# FinAlign  
-**Hybrid Financial Question Answering over FiQA (BEIR Benchmark)**  
+# FinAlign
 
-Matteo Pietro Di Pilato – Lorenzo Cinquemani – Lorenzo Marchioni  
-Bachelor’s Degree in Artificial Intelligence  
-University of Pavia  
+Financial document retrieval on the FiQA benchmark: BM25, dense retrieval with BGE, query expansion with Qwen, and monoT5 re-ranking.
 
----
+The question behind the project is whether semantic retrieval and generated query variants help when a financial question uses different vocabulary from the relevant answer. The experiments compare each stage against lexical baselines.
 
-## 📌 Overview
+[Notebook](notebook/Fin_IR_Project.ipynb) · [Report](report/FinalReportIRProject.pdf) · [Slides](FinAlign-Slides.pdf)
 
-**FinAlign** is a multi-stage hybrid Information Retrieval system designed for Financial Question Answering (FiQA) using the BEIR benchmark.
+## Results
 
-The project addresses a central challenge in financial retrieval:
+![Recorded nDCG at 10 for six retrieval configurations](assets/retrieval-results.png)
 
-> Bridging the vocabulary and knowledge gap between non-expert user queries and technical financial documents.
+| Configuration | nDCG@10 | MAP |
+| :--- | ---: | ---: |
+| TF-IDF | 0.2533 | 0.2096 |
+| BM25 | 0.2526 | 0.2104 |
+| BM25 + RM3 | 0.2454 | 0.2065 |
+| BGE chunks + query expansion | 0.4159 | **0.3569** |
+| BM25 + BGE chunks + query expansion | 0.4040 | 0.3410 |
+| Hybrid candidates + monoT5 | **0.4213** | 0.3561 |
 
-Unlike traditional keyword-based systems, FinAlign integrates:
+These are the saved notebook results on the 648 FiQA test queries. The dense chunk pipeline improves substantially over BM25 in this run. Adding BM25 alone lowers both metrics; re-ranking the hybrid candidate set gives the highest nDCG@10, while the dense pipeline retains the highest MAP among the configurations above.
 
-- Lexical retrieval (BM25)
-- Dense semantic retrieval (BGE bi-encoder)
-- LLM-based query rewriting
-- HyDE-style hypothetical document embeddings
-- Document chunking (passage-level retrieval)
-- Score fusion strategies (RRF & linear combination)
-- Neural re-ranking with monoT5
+The same query set was used throughout the experiments, including comparisons that informed the final design. These scores are exploratory benchmark results; they do not constitute an independent final validation. The notebook does not establish statistical significance for every neural comparison. [Machine-readable values and provenance](results/recorded_metrics.json) are included.
 
-The results show that instruction-aware dense retrieval combined with chunking and multi-stage re-ranking significantly improves performance over classical IR baselines.
+## Retrieval pipeline
 
----
+1. **Lexical baselines:** TF-IDF, BM25 and BM25 with RM3 feedback.
+2. **Dense retrieval:** `BAAI/bge-base-en-v1.5`, with a retrieval instruction prepended to queries.
+3. **Query variants:** `Qwen/Qwen2.5-1.5B-Instruct` generates technical keywords and hypothetical answers. The instruction query and the two variants receive weights of 0.70, 0.15 and 0.15 after per-query score normalization.
+4. **Passage retrieval:** documents are split into non-overlapping 250-word chunks. Each query variant retrieves up to 400 chunks; scores are combined and the highest-scoring passage represents each document.
+5. **Re-ranking:** the top 50 documents from the BM25/dense fusion are passed to `castorini/monot5-base-msmarco`.
 
-## 📂 Dataset
+The task is ranking documents. Generated answers are used to expand retrieval queries; the project does not evaluate an answer-generation system.
 
-We use the FiQA dataset from the BEIR benchmark.
+## Data
 
-- ~57,600 documents (after cleaning)
-- 648 unique queries
-- 1,705 relevance judgments (qrels)
-- Heterogeneous corpus including:
-  - Financial news
-  - Microblogs
-  - Report snippets
+The notebook loads [`irds:beir/fiqa/test`](https://ir-datasets.com/beir.html#beir/fiqa/test) through PyTerrier. The source collection has 57,638 documents, 648 test queries and 1,706 relevance judgments. Empty text is filtered and judgments are restricted to retained documents and queries. The corpus and model weights are downloaded at run time and are not stored here.
 
-This is an opinion-based explanatory retrieval task rather than simple fact extraction.
+## Run
 
----
-
-## 🏗 System Architecture
-
-FinAlign is implemented as a multi-stage retrieval pipeline:
-
-### 1️⃣ Baseline Systems
-- TF-IDF  
-- BM25  
-- BM25 + RM3 (pseudo-relevance feedback)  
-
-### 2️⃣ Dense Retrieval
-- BGE-base bi-encoder  
-- Instruction-aware query prefixing:
-
-```
-Represent this sentence for searching relevant financial passages:
-```
-
-### 3️⃣ Query Expansion
-- LLM-based query rewriting  
-- HyDE-style hypothetical document embeddings  
-- Multi-query fusion  
-
-### 4️⃣ Document Chunking
-- Fixed-length overlapping chunks  
-- Dense indexing at chunk level  
-- Max-pooling aggregation to document level  
-
-### 5️⃣ Fusion Strategies
-- Reciprocal Rank Fusion (RRF)  
-- Weighted linear score combination  
-
-### 6️⃣ Neural Re-ranking
-- monoT5 cross-encoder  
-- Applied to a restricted candidate set due to computational constraints  
-
----
-
-## 📊 Evaluation
-
-Evaluation is performed on the cleaned BEIR/FiQA test set using standard IR metrics:
-
-- MAP  
-- Precision@k (1, 5, 10)  
-- Recall@k (5, 10)  
-- nDCG@5  
-- nDCG@10  
-
-All systems are evaluated under identical conditions.
-
----
-
-## 🚀 Main Results
-
-Key findings:
-
-- Dense retrieval (BGE) significantly outperforms lexical baselines.
-- Instruction-aware prefixing improves embedding alignment.
-- Document chunking reduces semantic dilution and improves ranking quality.
-- Query rewriting works best as diversification (multi-query strategy).
-- Hybrid lexical + dense retrieval did not outperform dense retrieval alone.
-- monoT5 re-ranking produces the strongest overall results.
-
-The best-performing pipeline combines:
-
-Dense retrieval (instruction-tuned)  
-+ LLM query rewriting  
-+ Chunk-level retrieval  
-+ Linear fusion  
-+ monoT5 re-ranking  
-
-For complete numerical results, detailed metric tables, and full experimental analysis, please refer to the project report.
-
----
-
-## 🛠 Installation
-
-### 1️⃣ Clone the repository
+The experiments were developed in Google Colab with a CUDA GPU. The dense encoder explicitly uses `device="cuda"`; CPU execution requires changing that setting and will be slower. A Java installation is also needed for Terrier; see the [PyTerrier installation guide](https://pyterrier.readthedocs.io/en/latest/installation.html).
 
 ```bash
 git clone https://github.com/pdmdp/FinAlign.git
 cd FinAlign
+python -m pip install -r requirements.txt
+python -m jupyter lab notebook/Fin_IR_Project.ipynb
 ```
 
-### 2️⃣ Install dependencies
+Run the cells in order in a dedicated working directory. Indexing cells rebuild the named local index folders. The package list records the dependencies used by the source; a complete lockfile from the original Colab environment was not retained. HyDE generation uses sampling, so regenerated query variants and scores can differ. The full GPU pipeline has not been rerun for this repository update.
+
+The README figure can be regenerated without downloading data or models:
 
 ```bash
-pip install -r requirements.txt
+python -m pip install matplotlib
+python scripts/plot_results.py
 ```
 
-### 3️⃣ Install monoT5 extension
+## Authors
 
-```bash
-pip install --upgrade git+https://github.com/terrierteam/pyterrier_t5.git
-```
+Course project for Information Retrieval and Recommender Systems, BSc in Artificial Intelligence: **Matteo Pietro Di Pilato, Lorenzo Cinquemani and Lorenzo Marchioni**. Matteo implemented the retrieval pipelines and ran the experimental evaluation.
 
----
-
-## ⚙️ Implementation Details
-
-- Python  
-- PyTerrier  
-- Terrier indexing  
-- Sentence-Transformers (BGE)  
-- FAISS  
-- HuggingFace Transformers  
-- monoT5 re-ranker  
-- Google Colab (T4 GPU)  
-
-Due to hardware constraints, re-ranking is applied only to a limited candidate set.
-
----
-
-## 📄 Project Report
-
-A complete description of:
-
-- Methodology  
-- Experimental setup  
-- Detailed metric tables  
-- Discussion and limitations  
-- Future work  
-
-is available in:
-
-📎 `report/FinalReportIRProject.pdf`
-
-For deeper technical details, please consult the full report.
-
-It is also possible to consult the project presentation in:
-
-📎 `slides/FinAlign-Presentation.pdf`
-
----
-
-## 🔬 Key Takeaways
-
-This project highlights that:
-
-- Financial retrieval is primarily a semantic matching problem.
-- Instruction-aware dense encoders significantly improve alignment.
-- Chunk-level retrieval is crucial in heterogeneous financial corpora.
-- Multi-stage pipelines outperform single-model systems.
-- Careful system-level design is essential for domain-specific retrieval tasks.
-
----
-
-## 📌 Academic Integrity
-
-AI tools (ChatGPT, Claude, Gemini, GitHub Copilot) were used only for debugging assistance and minor clarity improvements.
-
-All system design, implementation, experiments, and evaluation were independently developed by the authors.
+Code is distributed under the [MIT license](LICENSE). The datasets and pretrained models retain their own licenses.

@@ -1,0 +1,47 @@
+{
+  "provenance": "Saved coursework notebook outputs; not a new retrieval run. Values rounded to six decimals in the notebook display.",
+  "metrics": [
+    {
+      "notebook_name": "TF_IDF",
+      "label": "TF-IDF",
+      "map": 0.209578,
+      "ndcg10": 0.253309,
+      "source_cell_index": 27
+    },
+    {
+      "notebook_name": "BM25",
+      "label": "BM25",
+      "map": 0.210418,
+      "ndcg10": 0.252634,
+      "source_cell_index": 27
+    },
+    {
+      "notebook_name": "BM25_Rewritten",
+      "label": "BM25 + RM3",
+      "map": 0.20651,
+      "ndcg10": 0.245356,
+      "source_cell_index": 27
+    },
+    {
+      "notebook_name": "BGE_Chunked_LLM",
+      "label": "BGE chunks + query expansion",
+      "map": 0.356942,
+      "ndcg10": 0.415948,
+      "source_cell_index": 52
+    },
+    {
+      "notebook_name": "BM25 + BGE_Chunked_LLM",
+      "label": "BM25 + BGE chunks + expansion",
+      "map": 0.340965,
+      "ndcg10": 0.403964,
+      "source_cell_index": 52
+    },
+    {
+      "notebook_name": "monoT5_chunking",
+      "label": "Hybrid candidates + monoT5",
+      "map": 0.356129,
+      "ndcg10": 0.421252,
+      "source_cell_index": 57
+    }
+  ]
+}

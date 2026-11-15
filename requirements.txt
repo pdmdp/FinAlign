@@ -1,5 +1,9 @@
+# Original notebook dependencies; no historical environment lockfile is available.
 python-terrier
-pyterrier_dr
+ir-datasets
+pyterrier-dr
+pyterrier-alpha
+pyterrier-t5 @ git+https://github.com/terrierteam/pyterrier_t5.git
 matplotlib
 seaborn
 transformers
@@ -9,4 +13,4 @@ torch
 tqdm
 pandas
 numpy
-
+jupyterlab
